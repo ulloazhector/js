@@ -10,8 +10,13 @@ class Transferencia {
     }
 
     info(){
+                                    // Hago referencia a la lista creada en consultarInfo()
+        let nodoLista = document.getElementById("listaTransferencias");
+        let li = document.createElement("li");
+        
         const sign = this.rec ? "+" : "-";
-        console.log(`${sign} $${this.amount}\n  Fecha: ${this.fecha}`);
+        li.innerHTML = `<li>${sign} $${this.amount}\n  Fecha: ${this.fecha}</li>`;
+        nodoLista.appendChild(li);  // Agrego ítem a la lista
     }
 }
 
@@ -51,8 +56,16 @@ class Wallet{
     }
     
     consultarInfo(){
-        console.log(`\n\n${this.n} transferencias\n`);
-        
+
+        if (this.n > 0){
+            let nodoSection = document.getElementById("transferencias");
+            nodoSection.innerHTML = `
+                                <h2>${this.n} transferencias</h2>
+                                <ul id="listaTransferencias"></ul>
+                                `;
+        }
+
+
         for (let i = 0; i < this.n; i++)
             this.arrayTransf[i].info();
 
@@ -60,12 +73,14 @@ class Wallet{
     }
 
     sortedInfo(ordenarPor){
-        let backup = this.arrayTransf;
+        if(this.n > 0){
+            let backup = this.arrayTransf;
 
-        this.arrayTransf.sort((a,b) => a[ordenarPor] - b[ordenarPor]);
-        
-        this.consultarInfo();
-        this.arrayTransf = backup;
+            this.arrayTransf.sort((a,b) => a[ordenarPor] - b[ordenarPor]);
+
+            this.consultarInfo();
+            this.arrayTransf = backup;
+        }
     }
 }
 // Fin Declaración de clases
@@ -102,11 +117,10 @@ do {
             break;
 
         case 3:
-            let option2 = parseInt(prompt(`Ordenar por:\n\n(1) Sin ordenar\n(2) Fecha\n(3) Monto`));
+            let option2 = parseInt(prompt(`Ordenar por:\n\n(1) Fecha\n(2) Monto`));
             switch(option2){
-                case 1: myWallet.consultarInfo(); break;
-                case 2: myWallet.sortedInfo("fecha"); break;
-                case 3: myWallet.sortedInfo("amount"); break;
+                case 1: myWallet.sortedInfo("fecha"); break;
+                case 2: myWallet.sortedInfo("amount"); break;
                 default:;
             }
             break;
