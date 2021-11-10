@@ -1,104 +1,117 @@
 
-//              Clase Tarjeta
-class Tarjeta{
-    constructor(name, tarjeta, number, ccv){
-        this.name = name;
-        this.tarjeta = tarjeta;
-        this.number = number;
-        this.ccv = ccv;
+// BOOTSTRAP
 
-    }
-}
-
-//              Nodos principales
-let addCards = document.getElementById(`addCards`);
-let listaDeTarjetas = document.getElementById(`listaDeTarjetas`);
-let formNewCard = document.getElementById(`formNewCard`);
-
-addCards.addEventListener(`click`, addCreditCardForm);
-
-
-
-
-//              Event handlers
-
-function addCreditCardForm(){
-    // Creo el formulario
-    formNewCard.innerHTML = `
-        <input placeholder="Títular" id="nombre"><br>
-        <input placeholder="Tarjeta" id="tarjeta"><br>
-        <input placeholder="Número" id="numero"><br>
-        <input placeholder="CCV" id="ccv"><br>
-    `;
-
-    // Agrego el botón
-    let boton = document.createElement(`button`);
-    boton.textContent = `Agregar`;
-    boton.setAttribute(`id`, `add`);
-    boton.addEventListener(`click`, addCard);
-    formNewCard.appendChild(boton);
-}
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+    'use strict'
+  
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll('.needs-validation')
+  
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+  
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
 
 
 
-function addCard(){
-    let nombre = document.getElementById(`nombre`).value;
-    let tarjeta = document.getElementById(`tarjeta`).value;
-    let numero = parseInt(document.getElementById(`numero`).value);
-    let ccv = parseInt(document.getElementById(`ccv`).value);
-
-    arrayDeTarjetas.push( new Tarjeta(nombre, tarjeta, numero, ccv) );
-
-    // Agrego una tarjeta a la lista, saco el formulario y muestro las tarjetas
-    formNewCard.innerHTML = ``;
-    mostrarTarjetas();
-}
 
 
 
-function eliminarTarjeta(e){
-    // Accedo al número de la tarjeta a eliminar
-    let num = parseInt(e.currentTarget.parentNode.children[2].innerHTML);
-    let index = arrayDeTarjetas.map(t => t.number).indexOf(num);
-    
-    // Elimino la tarjeta de arrayDeTarjetas
-    arrayDeTarjetas.splice(index,1);
-    mostrarTarjetas();
-}
 
 
 
-//              Funciones normales
-function mostrarTarjetas(){
-    listaDeTarjetas.innerHTML = ``;
-    
-    for (let i = 0; i < arrayDeTarjetas.length; i++) {
-        let li = document.createElement(`li`);
-        li.setAttribute(`id`, `tarjeta${i}`);
 
-        li.innerHTML = `
-            <p class="datos-tarjeta">${arrayDeTarjetas[i].name}</p>
-            <p class="datos-tarjeta">${arrayDeTarjetas[i].tarjeta}</p>
-            <p class="datos-tarjeta">${arrayDeTarjetas[i].number}</p>
-            <button class="quitarTarjeta">x</button>
-        `;
+  // Eventos Sidebar
+  //////////////////////////////////////////////////////////////////////
+  document.getElementById(`seccion-actividad`).style.display = `none`;
+  document.getElementById(`seccion-perfil`).style.display = `none`;
+  
+  let menuTarjetas = document.getElementById(`menu-tarjetas`);
+  let menuActividad = document.getElementById(`menu-actividad`);
+  let menuPerfil = document.getElementById(`btn-editar-perfil`);
+  
+  menuTarjetas.addEventListener(`click`, selectTarjetas);
+  menuActividad.addEventListener(`click`, selectActividad);
+  menuPerfil.addEventListener(`click`, selectPerfil);
+  
 
-        listaDeTarjetas.appendChild(li);
-        let vector = document.getElementsByClassName(`quitarTarjeta`);
-        vector[i].addEventListener(`click`,eliminarTarjeta);
 
-        
+
+  // Cambio los displays del documento, para mostrar la seccion seleccionada
+  function selectTarjetas(){
+      menuTarjetas.classList.add(`active`);
+      menuActividad.classList.remove(`active`);
+      document.getElementById(`seccion-tarjetas`).style.display = `block`;
+      document.getElementById(`seccion-actividad`).style.display = `none`;
+      document.getElementById(`seccion-perfil`).style.display = `none`;
     }
     
-}
+    function selectActividad(){
+        menuActividad.classList.add(`active`);
+        menuTarjetas.classList.remove(`active`);
+        document.getElementById(`seccion-actividad`).style.display = `block`;
+        document.getElementById(`seccion-tarjetas`).style.display = `none`;
+        document.getElementById(`seccion-perfil`).style.display = `none`;
+    }
+
+    function selectPerfil(){
+        menuActividad.classList.remove(`active`);
+        menuTarjetas.classList.remove(`active`);
+        document.getElementById(`seccion-perfil`).style.display = `block`;
+        document.getElementById(`seccion-actividad`).style.display = `none`;
+        document.getElementById(`seccion-tarjetas`).style.display = `none`;
+    }
 
 
 
 
 
+    // Eventos Editar perfil
+    //////////////////////////////////////////////////////////////////////
+    let btnGuardar = document.getElementById(`guardar-info`);
+    let userFirstName, userLastName, userEmail;
 
-//              MAIN
+    btnGuardar.addEventListener(`click`, actualizarInfoUsuario);
 
-const arrayDeTarjetas = [];
-arrayDeTarjetas.push( new Tarjeta(`USUARIO LOCAL`, `visa`, 23422342, 574) );
-mostrarTarjetas();
+    function actualizarInfoUsuario() {
+        userFirstName   = document.getElementById(`usuario-nombre`);
+        userLastName    = document.getElementById(`usuario-apellido`);
+        userEmail       = document.getElementById(`usuario-correo`);
+
+        let usuario = { FirstName:  userFirstName.value,
+                        LastName:   userLastName.value,
+                        Email:      userEmail.value};
+
+        // Actualizo informacion del usuario
+        usuarioJson = JSON.stringify(usuario);
+        localStorage.setItem(`infoUsuario`, usuarioJson);
+
+        // Limpio los inputs
+        userFirstName.value = ``;
+        userLastName.value  = ``;
+        userEmail.value     = ``;
+
+        refreshMenu();
+    }
+
+    let userMenu = document.getElementById(`user-menu`);
+
+    function refreshMenu(){
+        // Si no hay ningun usuario registrado se muestr User en el menu
+        let lastUser = JSON.parse( localStorage.getItem(`infoUsuario`) );
+        userMenu.innerHTML = (localStorage.length) ? lastUser.FirstName : `User`;
+    }
+
+
+    
+    refreshMenu();
