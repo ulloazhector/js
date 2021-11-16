@@ -1,184 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <title>Billetera Virtual</title>
 </head>
-<body>
 
-    <div class="container m-0 p-0">
-        <div class="row">
-          <div class="col-auto">
-            <!-- Sidebar -->
-            <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sticky-top" style="width: 280px; height: 100vh;">
-                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+<body class="h-100vh bg-light">
+
+    <div class="container-fluid m-0 p-0" id="page-content">
+    </div>
+
+
+
+
+
+    <!----------------------------------------------->
+    <!-- Templates -->
+
+    <!-- User sign in -->
+    <template id="tmplt-user-signin">
+        <div class="row m-3 justify-content-center align-items-center bg-light flex-column" id="signin-form">
+            <h2 class="col-12 mb-4 mt-5 px-5">Sign In</h2>
+            <form class="col-12 mb-3 px-5">
+                <div class="mb-3">
+                    <label for="input-username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon">@</span>
+                        <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon"
+                            id="input-username-signin">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="input-pin" class="form-label">PIN <span class="fw-light fs-6 text-muted">(4-digit
+                            number)</span></label>
+                    <input type="password" class="form-control" id="input-pin-signin">
+                </div>
+            </form>
+            <div class="col-12 px-5">
+                <button class="btn btn-primary mb-4" id="btn-signin">Sign In</button>
+            </div>
+            <div class="col-12 px-5">
+                <p><a href="/" id="create-account">Create account</a></p>
+            </div>
+        </div>
+    </template>
+
+    <!-- User sign up -->
+    <template id="tmplt-user-signup">
+        <div class="row m-3 justify-content-center align-items-center bg-light flex-column" id="signup-form">
+            <h2 class="col-12 mb-4 mt-5 px-5">Sign Up</h2>
+            <form class="col-12 mb-3 px-5">
+                <div class="mb-3">
+                    <label for="input-username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon1">@</span>
+                        <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1"
+                            id="input-username">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="input-pin" class="form-label">PIN <span class="fw-light fs-6 text-muted">(4-digit
+                            number)</span></label>
+                    <input type="password" class="form-control" id="input-pin">
+                </div>
+            </form>
+            <div class="col-12 px-5">
+                <button class="btn btn-primary mb-4" id="btn-signup">Sign Up</button>
+            </div>
+            <div class="col-12 px-5">
+                <p><a href="/" id="login">Log in</a></p>
+            </div>
+        </div>
+    </template>
+
+    <!-- Dashboard -->
+    <template id="tmplt-dashboard">
+        <div class="row m-0 p-0 flex-nowrap">
+            <div class="col-auto p-0 m-0" id="main-menu"></div>
+            <div class="col-sm-5 col-auto col-md-6 p-0 m-5" id="main-content"></div>
+        </div>
+    </template>
+
+    <!-- Sidebar -->
+    <template id="tmplt-sidebar">
+        <div class="d-flex flex-column flex-shrink-0 p-3 sticky-top bg-light" style="width: 280px; height: 100vh;">
+            <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
                 <span class="fs-4">Billetera</span>
-                </a>
-                <hr>
-                <ul class="nav nav-pills flex-column mb-auto">
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a href="#" class="nav-link text-white active" id="menu-tarjetas">
-                    Tarjetas
+                    <a href="#" class="nav-link active" id="menu-mi-cuenta">
+                        Mi cuenta
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link text-white" id="menu-actividad">
-                    Actividad
+                    <a href="#" class="nav-link" id="menu-actividad">
+                        Actividad
                     </a>
                 </li>
-                </ul>
+            </ul>
 
-                <hr>
+            <hr>
 
-                <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="dropdownUser1"
+                    data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
-                    <strong id="user-menu"></strong>
+                    <strong id="username-sidebar"></strong>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                    <li><a class="dropdown-item" href="#" id="btn-editar-perfil">Editar perfil</a></li>
+                    <li><a class="dropdown-item" href="#" id="btn-salir-sidebar">Salir...</a></li>
                 </ul>
+            </div>
+        </div>
+    </template>
+
+    <!-- Mi cuenta -->
+    <template id="tmplt-mi-cuenta">
+        <div class="container-fluid g-5">
+            <div class="row flex-column">
+                <div class="col">
+                    <div class="card bg-light d-flex flex-row w-100 align-items-center mb-3" style="width: 18rem;">
+                        <img src="images/usericon.png" class="card-img-top w-25" alt="...">
+                        <div class="card-body  d-flex flex-column justify-content-between">
+                            <h2 class="card-title" id="user-card">@Username</h2>
+                            <a href="#" class="btn btn-danger rounded-pill w-25" id="btn-logout">Salir</a>
+                        </div>
+                    </div>
+                    <div class="card bg-light d-flex flex-row w-100 align-items-center" style="width: 18rem;">
+                        <div class="card-body">
+                            <h2 class="card-title" id="dinero-card">$1500</h2>
+                            <p class="card-text">Podés enviar dinero a cualquier usuario registrado.</p>
+                            <a class="btn btn-primary rounded-pill" id="btn-send-money" data-bs-toggle="modal"
+                                data-bs-target="#modalTransferencia">Enviar dinero</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- Fin Sidebar -->
         </div>
+    </template>
 
-
-          <div class="col" id="contenido">
-                <!-- Seccion tarjetas -->
-              <div class="container" id="seccion-tarjetas">
-                  <div class="row">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary w-auto m-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Agregar 
-                    </button>
-                    
-                    <!-- Modal -->
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Agregar Tarjeta</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-
-                            <!-- Formulario -->
-                            <form class="row g-3 needs-validation" novalidate>
-
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="floatingInput" placeholder=" " required>
-                                    <label for="floatingInput" class="form-label">Titular</label>
-                                </div>
-
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="floatingInput" placeholder=" " required>
-                                    <label for="floatingInput" class="form-label">Número de tarjeta</label>
-                                </div>
-
-                                <div class="form-floating col-md-6">
-                                    <input type="text" class="form-control" id="floatingInput" placeholder="cf " required>
-                                    <label for="floatingInput" class="form-label">Vencimiento</label>
-                                </div>
-                                <div class="form-floating col-md-6">
-                                    <input type="text" class="form-control" id="floatingInput" placeholder="cf " required>
-                                    <label for="floatingInput" class="form-label">CCV</label>
-                                </div>
-                                
-                                <div class="col-md-8"></div>
-                                <div class="col-md-4 mb-3">
-                                  <select class="form-select" id="validationCustom04" required>
-                                    <option selected disabled value="">...</option>
-                                    <option>VISA</option>
-                                    <option>MasterCard</option>
-                                  </select>
-                                </div>
-
-                                <div class="col-12">
-                                  <button class="btn btn-primary" type="submit">Agregar</button>
-                                </div>
-
-                              </form>
-                            <!-- Fin Formulario -->
-                                
-                            </div>
-                        </div>
-                        </div>
+    <!-- Mi actividad -->
+    <template id="tmplt-mi-actividad">
+        <div class="card mb-4 border-0 border-start border-3 bg-light" style="max-width: 500px;">
+            <div class="card-body container">
+                <div class="row">
+                    <div class="col-7">
+                        <p class="text-muted">xx/xx/xx</p>
                     </div>
-                    <!-- Fin Modal -->
-                    <div class="row">
-                        
+                    <div class="col-5">
+                        <h3>$xxx</h3>
                     </div>
-                      
-                    <!-- Lista de tarjetas -->
-                    <ul id="lista-de-tarjetas"></ul>
-                    <template id="template-tarjeta">
-                      <li class="item-tarjeta">
-                        <div class="card text-white bg-dark m-3" style="max-width: 22rem;">
-                            <div class="card-header">Header</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Dark card title</h5>
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            </div>
-                        </div>
-                      </li>
-                    </template>
-
-                  </div>
-              </div>
-                <!-- Fin Seccion tarjetas -->
-
-
-                <!-- Seccion actividad -->
-                <div class="container" id="seccion-actividad">
-                    <div class="row">Sección actividad</div>
                 </div>
-                <!-- Fin Seccion actividad -->
-
-                <!-- Seccion perfil -->
-                <div class="container mt-5" id="seccion-perfil">
-                    <div class="row d-flex justify-content-center">
-                        <div class="col-3 d-flex justify-content-center w-25">
-                            <img src="images/usericon.png" alt="" class="w-75">
-
-                        </div>
-                    </div>
-                        <div class="row g-3 d-flex justify-content-center">
-                            <div class="col-3">
-
-                                <div class="row mb-3">
-                                    <input type="text" class="form-control" placeholder="Nombre" aria-label="Nombre" id="usuario-nombre">
-                                </div>
-                                <div class="row mb-3">
-                                    <input type="text" class="form-control" placeholder="Apellido" aria-label="Apellido" id="usuario-apellido">
-                                </div>
-                                <div class="row mb-3">
-                                    <input type="email" class="form-control" placeholder="Correo electrónico" aria-label="Correo electronico" id="usuario-correo">
-                                </div>
-                                <div class="row mb-3">
-                                    <button type="submit" class="btn btn-primary" id="guardar-info">Guardar</button>
-                                </div>
-                            </div>
-                          </div>
+                <div class="row">
+                    <div class="col"><h5>Cuenta> @xxxxxx</h5></div>
                 </div>
-                <!-- Fin Seccion perfil -->
-
-          </div>
-
+            </div>
         </div>
-      </div>
+    </template>
 
-        
+    <!-- Transferir -->
+    <template id="tmplt-transferir">
+        <!-- Modal -->
+        <div class="modal fade" id="modalTransferencia" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Enviar dinero</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="col-12 mb-3 px-5">
+                            <div class="mb-3">
+                                <label for="input-username-destiny" class="form-label"
+                                    placeholder="Destino">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon2">@</span>
+                                    <input type="text" class="form-control" aria-label="Username"
+                                        aria-describedby="basic-addon2" id="input-username-destiny">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="input-amount" class="form-label">Monto</label>
+                                <input type="number" class="form-control" id="input-amount">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                            id="btn-send">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
 
-    
+    <!-- Fin Templates -->
+    <!----------------------------------------------->
 
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+        integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+        integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+        crossorigin="anonymous"></script>
+
     <script src="main.js"></script>
-    <script src="events.js"></script>
 </body>
+
 </html>
