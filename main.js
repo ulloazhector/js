@@ -18,20 +18,18 @@ const timeFormat        =           /\d{2}:\d{2}:\d{2}/;
 // Usuario actual
 let lastUser = {};
 
-
 const bgGradiente = `linear-gradient(36deg, rgba(151,167,208,1) 0%, rgba(255,255,255,1) 100%)`
 
 
-
-
 // Al ingresar por primera vez
-pageContent.style.height = `100vh`;
+// pageContent.style.height = `100vh`;
 pageContent.style.background = bgGradiente;
 
 
 // Log in
 function loadSignInForm() {
-
+    
+    pageContent.style.height = `100vh`;
     pageContent.innerHTML = ``;
     pageContent.classList.add(`d-flex`, `flex-column`, `justify-content-center`, `align-items-center`);
     
@@ -58,6 +56,9 @@ function loadSignInForm() {
             lastUser.current = true;
             localStorage.setItem(`user_${lastUser.username}`, JSON.stringify(lastUser));
 
+            /* * * * * * * * * * * * * * * * * * * * * * * * * * *
+                                    INGRESO
+            * * * * * * * * * * * * * * * * * * * * * * * * * * */
             loadDashboard();
         }else{
             // Alerta si hay datos invalidos
@@ -81,6 +82,8 @@ function loadSignInForm() {
 
 // Sign Up
 function loadSignUpForm() {
+    pageContent.style.height = `100vh`;
+    
     pageContent.innerHTML = ``;
     pageContent.classList.add(`d-flex`, `flex-column`, `justify-content-center`, `align-items-center`);
     
@@ -99,8 +102,12 @@ function loadSignUpForm() {
         newUser = {
             username:   inputUsername.value,
             pin:        inputPin.value,
-            dinero:     1000,
+            dinero:     {
+                            ARS: 1000,
+                            USD: 0
+                        },
             actividad:  [],
+            tarjetas:   [],
             current:    true
         };
         
@@ -119,6 +126,10 @@ function loadSignUpForm() {
                 // El usuario actual es el que se acaba de registrar
                 lastUser = newUser;
                 localStorage.setItem(`user_${newUser.username}`, JSON.stringify(newUser));
+
+                /* * * * * * * * * * * * * * * * * * * * * * * * * * *
+                                    INGRESO
+                * * * * * * * * * * * * * * * * * * * * * * * * * * */
                 loadDashboard();
             }
             else {
@@ -149,8 +160,10 @@ function loadSignUpForm() {
     });
 }
 
-// Dashboard
+// Dashboard Layout
 const loadDashboard = () => {
+    pageContent.style.height = `100%`;
+
     pageContent.innerHTML = ``;
     pageContent.classList.remove(`d-flex`, `flex-column`, `justify-content-center`, `align-items-center`)
 
@@ -165,42 +178,37 @@ const loadDashboard = () => {
     loadMainContent();
 }
 
-// Cargar menu
+// Mostrar menu
 function loadMenu(){
+    const mainContent = document.getElementById(`main-content`)
     const mainMenu = document.getElementById(`main-menu`);
     const clone = tmpltSidebar.cloneNode(true);
     fragment.appendChild(clone)
     mainMenu.appendChild(fragment);
 
+    $(`ul.nav`).append(`
+        <li class="nav-item">
+            <a href="#" class="nav-link" id="menu-cambio">
+                Exchange
+            </a>
+        </li>
+    `)
+    $(`ul.nav`).append(`
+        <li class="nav-item">
+            <a href="#" class="nav-link" id="menu-tarjetas">
+                Cards
+            </a>
+        </li>
+    `)
+   
+
     document.getElementById(`username-sidebar`)
         .textContent = lastUser.username;
-}
 
-// Cargar contenido
-function loadMainContent() {
-    tmpltMiCuenta.getElementById(`user-card`).textContent = `@${lastUser.username}`;
-    tmpltMiCuenta.getElementById(`dinero-card`).textContent = `$${lastUser.dinero}`;
-
-    const mainContent = document.getElementById(`main-content`);
-    mainContent.textContent = ``;
-    let clone = tmpltMiCuenta.cloneNode(true);
-    fragment.appendChild(clone);
-    mainContent.appendChild(fragment);
-    
-    clone = tmpltTransferir.cloneNode(true);
-    fragment.appendChild(clone);
-    mainContent.appendChild(fragment);
-    
-
-    // Eventos Sidebar a MainContent
+        
     const menuMiCuenta      = document.getElementById(`menu-mi-cuenta`);
     const menuActividad     = document.getElementById(`menu-actividad`);
-    const btnSalirSidebar   = document.getElementById(`btn-salir-sidebar`);
-    const btnLogoutMain     = document.getElementById(`btn-logout`);
 
-
-
-    // Asigno los eventos
     menuMiCuenta.addEventListener(`click`, e => {
         e.preventDefault();
 
@@ -209,29 +217,62 @@ function loadMainContent() {
         // Colores en el sidebar
         menuMiCuenta.classList.add(`active`);
         menuActividad.classList.remove(`active`);
-        loadDashboard();
+        $(`#menu-cambio`).removeClass(`active`);
+        $(`#menu-tarjetas`).removeClass(`active`);
 
-        let clone = tmpltMiCuenta.cloneNode(true);
-        fragment.appendChild(clone);
-        mainContent.appendChild(fragment);
-
+        loadMainContent();
+        
     });
-
-
+    
+    
     menuActividad.addEventListener(`click`, e => {
         e.preventDefault();
-
+        
         mainContent.textContent = ``;
-
+        
         // Colores en el sidebar
         menuMiCuenta.classList.remove(`active`);
         menuActividad.classList.add(`active`);
+        $(`#menu-cambio`).removeClass(`active`);
+        $(`#menu-tarjetas`).removeClass(`active`);
 
-        // let clone = tmpltMiActividad.cloneNode(true);
-        // fragment.appendChild(clone);
-        // mainContent.appendChild(fragment);
+        let clone = tmpltMiActividad.cloneNode(true);
+        fragment.appendChild(clone);
+        mainContent.appendChild(fragment);
         loadActivity();
     });
+
+    // Funcion en exchange.js
+    $(`#menu-cambio`).click(() => {loadExchange()});
+    $(`#menu-tarjetas`).click(() => {loadCards()});
+}
+
+// Cargar contenido
+function loadMainContent() {
+    tmpltMiCuenta.getElementById(`user-card`).textContent = `@${lastUser.username}`;
+    tmpltMiCuenta.getElementById(`dinero-card-ars`).textContent = `ARS $${lastUser.dinero.ARS.toFixed(2)}`;
+    tmpltMiCuenta.getElementById(`dinero-card-usd`).textContent = `USD $${lastUser.dinero.USD.toFixed(2)}`;
+
+    const mainContent = document.getElementById(`main-content`);
+    mainContent.textContent = ``;
+
+    let clone = tmpltMiCuenta.cloneNode(true);
+    fragment.appendChild(clone);
+    mainContent.appendChild(fragment);
+    
+    clone = tmpltTransferir.cloneNode(true);
+    fragment.appendChild(clone);
+    mainContent.appendChild(fragment);
+    
+    
+    // Eventos Sidebar a MainContent
+    const btnSalirSidebar   = document.getElementById(`btn-salir-sidebar`);
+    const btnLogoutMain     = document.getElementById(`btn-logout`);
+
+
+
+    // Asigno los eventos
+    
 
 
     btnSalirSidebar.addEventListener(`click`, e => {
@@ -266,11 +307,12 @@ function loadMainContent() {
             && ( lastUser.username !== inputDestiny.value ) ){
 
                 // Verifico la cantidad
-                if( ( parseInt(inputAmount.value) <= lastUser.dinero)
-                && ( parseInt(inputAmount.value) > 0) ){
+                let currency = $(`#ars-currency`).prop(`checked`) ? `ARS` : `USD`;
+
+                if( ( parseFloat(inputAmount.value) <= lastUser.dinero[currency])
+                && ( parseFloat(inputAmount.value) > 0) ){
+
                     // Transfiero
-                    
-                    
                     const destinyUser = usuarios[usuarios.findIndex(user => user.username === inputDestiny.value)];
 
                     let fechaTrsf = new Date(Date.now());
@@ -278,25 +320,29 @@ function loadMainContent() {
                     
                     
                     // Actualizo datos origen
-                    lastUser.dinero -= parseInt(inputAmount.value);
+                    lastUser.dinero[currency] -= parseFloat(inputAmount.value);
                     lastUser.actividad.push({
-                        env:    1,
-                        amt:    parseInt(inputAmount.value),
+                        tipo:   `envio`,
+                        amt:    parseFloat(inputAmount.value),
+                        moneda: currency,
                         orgdes: inputDestiny.value,
                         hora:   horaTrsf[0]
                     });
+
                     // Sobreescribo el usuario en localStorage
                     localStorage.setItem(`user_${lastUser.username}`, JSON.stringify(lastUser));
                     
                     
                     // Actualizo datos destino
-                    destinyUser.dinero += parseInt(inputAmount.value);
+                    destinyUser.dinero[currency] += parseFloat(inputAmount.value);
                     destinyUser.actividad.push({
-                        env:    0,
-                        amt:    parseInt(inputAmount.value),
+                        tipo:   `recibido`,
+                        amt:    parseFloat(inputAmount.value),
+                        moneda: currency,
                         orgdes: lastUser.username,
                         hora:   horaTrsf[0]
                     });
+
                     // Sobreescribo el usuario en localStorage
                     localStorage.setItem(`user_${destinyUser.username}`, JSON.stringify(destinyUser));
                     
@@ -317,20 +363,42 @@ function loadActivity(){
     if (lastUser.length != 0){
         if (lastUser.actividad.length != 0){
             lastUser.actividad.forEach(actividad => {
+
                 // Modifico cada card
                 tmpltMiActividad.querySelector(`p`).textContent = actividad.hora;
-                tmpltMiActividad.querySelector(`h3`).textContent =  `${actividad.env ? `-` : `+`} 
-                $${actividad.amt}`;
-                tmpltMiActividad.querySelector(`h5`).textContent = `Cuenta: @${actividad.orgdes}`;
+                tmpltMiActividad.querySelector(`h4`).textContent =  `${actividad.tipo === `envio` ? `-` : `+`} 
+                $${actividad.amt} ${actividad.moneda}`;
+                if(actividad.tipo === `cambio`)
+                    tmpltMiActividad.querySelector(`h5`).textContent = `Conversión`;
+                else
+                    tmpltMiActividad.querySelector(`h5`).textContent = `Cuenta: @${actividad.orgdes}`;
+
                 tmpltMiActividad.querySelector(`.card`).classList.remove(`border-danger`, `border-success`);
                 tmpltMiActividad.querySelector(`.card`).classList
-                                .add(`${actividad.env ? `border-danger` : `border-success`}`); 
+                                .add(`${actividad.tipo === `envio` ? `border-danger` : `border-success`}`); 
 
                 let clone = tmpltMiActividad.cloneNode(true);
                 fragment.prepend(clone);
             });
             mainContent.appendChild(fragment);
+            
+            let i = 0
+            Object.values(mainContent.children).forEach(child => {
+                $(child).hide(0, () => {$(child).css({
+                    transition: `all 400ms`,
+                    transform: `translateX(20px)`,
+                    opacity: `0`
+                })})
+                $(child).delay(300*i++).show(0, () => {$(child).css({
+                    transform: `translateX(0)`,
+                    opacity: `1`
+                })});
+            })
+
+
+
         } else {
+
             // No hubo actividades
             h2 = document.createElement(`h2`);
             h2.textContent = `No hubo actividades hasta ahora`
@@ -356,6 +424,7 @@ if(localStorage.length > 0){
 
     if (lastUser != null)   loadDashboard();
     else                    loadSignInForm();
+
 } else {
     loadSignUpForm();
 }
